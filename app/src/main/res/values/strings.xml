@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">MobileTech Utility App</string>
+
+    <!-- Weather (main) screen -->
+    <string name="weather_updated_at">Updated %1$s</string>
+    <string name="weather_refresh">Refresh weather</string>
+    <string name="weather_loading">Loading weather…</string>
+    <string name="weather_feels_like">Feels like %1$s</string>
+    <string name="weather_high_low">High %1$s · Low %2$s</string>
+
+    <!-- Errors -->
+    <string name="error_network">No internet connection. Check your connection and try again.</string>
+    <string name="error_server">Couldn\'t load the weather right now. Please try again.</string>
+    <string name="action_retry">Retry</string>
 </resources>

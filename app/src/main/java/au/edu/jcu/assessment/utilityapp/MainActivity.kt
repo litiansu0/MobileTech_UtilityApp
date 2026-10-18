@@ -20,10 +20,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import au.edu.jcu.assessment.utilityapp.screen.SettingsScreen
-import au.edu.jcu.assessment.utilityapp.screen.UtilityScreen
 import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
+import au.edu.jcu.assessment.utilityapp.ui.weather.WeatherScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,14 +36,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun UtilityAppPreview() {
-    MobileTech_UtilityAppTheme {
-        UtilityApp()
-    }
-}
-
+// No preview here: the weather tab needs WeatherApplication's container, which previews
+// don't have. See the previews in WeatherScreen.kt instead.
 @Composable
 fun UtilityApp() {
     var selectedTab by remember { mutableStateOf("Utility") }
@@ -69,7 +62,7 @@ fun UtilityApp() {
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedTab) {
-                "Utility" -> UtilityScreen()
+                "Utility" -> WeatherScreen()
                 "Settings" -> SettingsScreen()
             }
         }
