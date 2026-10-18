@@ -9,8 +9,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -18,25 +20,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import au.edu.jcu.assessment.utilityapp.R
-import au.edu.jcu.assessment.utilityapp.domain.OutfitAdvisor
-import au.edu.jcu.assessment.utilityapp.domain.model.City
 import au.edu.jcu.assessment.utilityapp.domain.model.Metric
-import au.edu.jcu.assessment.utilityapp.domain.model.TemperatureUnit
-import au.edu.jcu.assessment.utilityapp.domain.model.UserSettings
-import au.edu.jcu.assessment.utilityapp.domain.model.Weather
-import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewData
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewSurface
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.AdviceCard
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.CurrentWeatherCard
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.LocationHeader
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.MetricTiles
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.SunTimesCard
-import java.time.LocalDateTime
 
-/** Main (Utility) tab. Connects the [WeatherViewModel] to the stateless [WeatherContent]. */
+/** Main (Today) tab. Connects the [WeatherViewModel] to the stateless [WeatherContent]. */
 @Composable
 fun WeatherScreen(
     modifier: Modifier = Modifier,
@@ -60,31 +58,47 @@ fun WeatherContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class) // PullToRefreshBox is still experimental in Material 3 1.3.
 @Composable
 private fun WeatherDetails(
     state: WeatherUiState.Success,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+    // Pull down to refresh. The indicator also shows when the refresh button is tapped,
+    // because both set isRefreshing in the ViewModel.
+    PullToRefreshBox(
+        isRefreshing = state.isRefreshing,
+        onRefresh = onRefresh,
+        modifier = modifier.fillMaxSize(),
     ) {
-        LocationHeader(
-            cityName = state.city.name,
-            updatedAt = state.weather.updatedAt.formatTime(),
-            onRefresh = onRefresh,
-        )
-        CurrentWeatherCard(weather = state.weather)
-        AdviceCard(advice = state.advice)
-        MetricTiles(weather = state.weather, visibleMetrics = state.visibleMetrics)
-        if (Metric.SUN_TIMES in state.visibleMetrics) {
-            SunTimesCard(weather = state.weather)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            LocationHeader(
+                cityName = state.city.name,
+                updatedAt = state.weather.updatedAt.formatTime(),
+                onRefresh = onRefresh,
+                refreshError = state.refreshError?.let { refreshErrorMessage(it) },
+            )
+            CurrentWeatherCard(weather = state.weather)
+            AdviceCard(advice = state.advice)
+            MetricTiles(weather = state.weather, visibleMetrics = state.visibleMetrics)
+            if (Metric.SUN_TIMES in state.visibleMetrics) {
+                SunTimesCard(weather = state.weather)
+            }
         }
     }
+}
+
+@Composable
+private fun refreshErrorMessage(reason: ErrorReason): String = when (reason) {
+    ErrorReason.NETWORK -> stringResource(R.string.refresh_failed_network)
+    ErrorReason.SERVER -> stringResource(R.string.refresh_failed_server)
 }
 
 @Composable
@@ -122,54 +136,48 @@ private fun ErrorState(reason: ErrorReason, onRetry: () -> Unit, modifier: Modif
     }
 }
 
-// ---- Previews (sample data only, no network) ----
+// ---- Previews (sample data from PreviewData, no network) ----
 
-private val previewWeather = Weather(
-    temperature = 21.4,
-    apparentTemperature = 21.1,
-    maxTemperature = 21.8,
-    minTemperature = 14.7,
-    unit = TemperatureUnit.CELSIUS,
-    weatherCode = 53,
-    isDay = true,
-    precipitationProbability = 73,
-    uvIndex = 7.95,
-    uvIndexMax = 8.05,
-    windSpeedKmh = 13.9,
-    humidity = 56,
-    sunrise = LocalDateTime.of(2026, 10, 18, 5, 9),
-    sunset = LocalDateTime.of(2026, 10, 18, 17, 57),
-    updatedAt = LocalDateTime.of(2026, 10, 18, 10, 15),
-)
-
-@Preview(showBackground = true, name = "Success")
+@PreviewLightDark
 @Composable
 private fun WeatherSuccessPreview() {
-    MobileTech_UtilityAppTheme {
+    PreviewSurface {
+        WeatherContent(uiState = PreviewData.success, onRefresh = {})
+    }
+}
+
+/** Checks the layout still works when the user has made system text 1.5× larger. */
+@Preview(name = "Large text", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun WeatherLargeTextPreview() {
+    PreviewSurface {
+        WeatherContent(uiState = PreviewData.success, onRefresh = {})
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun WeatherRefreshFailedPreview() {
+    PreviewSurface {
         WeatherContent(
-            uiState = WeatherUiState.Success(
-                city = City.BRISBANE,
-                weather = previewWeather,
-                advice = OutfitAdvisor.advise(previewWeather, UserSettings()),
-                visibleMetrics = Metric.entries.toSet(),
-            ),
+            uiState = PreviewData.success.copy(refreshError = ErrorReason.NETWORK),
             onRefresh = {},
         )
     }
 }
 
-@Preview(showBackground = true, name = "Loading")
+@PreviewLightDark
 @Composable
 private fun WeatherLoadingPreview() {
-    MobileTech_UtilityAppTheme {
+    PreviewSurface {
         WeatherContent(WeatherUiState.Loading, onRefresh = {})
     }
 }
 
-@Preview(showBackground = true, name = "Error")
+@PreviewLightDark
 @Composable
 private fun WeatherErrorPreview() {
-    MobileTech_UtilityAppTheme {
+    PreviewSurface {
         WeatherContent(WeatherUiState.Error(ErrorReason.NETWORK), onRefresh = {})
     }
 }

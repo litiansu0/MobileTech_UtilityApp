@@ -41,7 +41,13 @@ class WeatherViewModel(
     /** Result of the latest download, before advice is added. */
     private sealed interface LoadState {
         data object Loading : LoadState
-        data class Loaded(val city: City, val weather: Weather) : LoadState
+        data class Loaded(
+            val city: City,
+            val weather: Weather,
+            val isRefreshing: Boolean = false,
+            /** Set when a refresh failed; [weather] is then the older data still on screen. */
+            val refreshError: ErrorReason? = null,
+        ) : LoadState
         data class Failed(val reason: ErrorReason) : LoadState
     }
 
@@ -60,6 +66,8 @@ class WeatherViewModel(
                     weather = load.weather,
                     advice = OutfitAdvisor.advise(load.weather, settings),
                     visibleMetrics = settings.visibleMetrics,
+                    isRefreshing = load.isRefreshing,
+                    refreshError = load.refreshError,
                 )
             }
         }.stateIn(
@@ -78,7 +86,7 @@ class WeatherViewModel(
         }
     }
 
-    /** Called by the refresh and retry buttons. */
+    /** Called by pull-to-refresh and the refresh and retry buttons. */
     fun refresh() {
         val settings = settingsRepository.settings.value
         loadWeather(settings.city, settings.temperatureUnit)
@@ -86,17 +94,24 @@ class WeatherViewModel(
 
     private fun loadWeather(city: City, unit: TemperatureUnit) {
         loadJob?.cancel()
+
+        // Refreshing the same city and unit keeps the current weather on screen while the new
+        // data loads. A different city or unit shows the full loading screen instead, so old
+        // data is never shown under the wrong name or unit.
+        val shown = (loadState.value as? LoadState.Loaded)
+            ?.takeIf { it.city == city && it.weather.unit == unit }
+        loadState.value = shown?.copy(isRefreshing = true, refreshError = null) ?: LoadState.Loading
+
         loadJob = viewModelScope.launch {
-            loadState.value = LoadState.Loading
             loadState.value = try {
                 LoadState.Loaded(city, weatherRepository.getWeather(city, unit))
             } catch (e: CancellationException) {
                 throw e // A newer request replaced this one; let the coroutine stop normally.
-            } catch (e: IOException) {
-                LoadState.Failed(ErrorReason.NETWORK)
             } catch (e: Exception) {
-                // HTTP errors (HttpException) or unexpected JSON.
-                LoadState.Failed(ErrorReason.SERVER)
+                // IOException = no connection; anything else = HTTP error or unexpected JSON.
+                val reason = if (e is IOException) ErrorReason.NETWORK else ErrorReason.SERVER
+                // A failed refresh keeps the older weather visible and just reports the problem.
+                shown?.copy(isRefreshing = false, refreshError = reason) ?: LoadState.Failed(reason)
             }
         }
     }

@@ -15,11 +15,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import au.edu.jcu.assessment.utilityapp.R
 import au.edu.jcu.assessment.utilityapp.domain.UvLevel
 import au.edu.jcu.assessment.utilityapp.domain.model.Metric
 import au.edu.jcu.assessment.utilityapp.domain.model.Weather
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewData
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewSurface
 import kotlin.math.roundToInt
 
 private const val TILES_PER_ROW = 3
@@ -95,3 +98,12 @@ private fun uvLevelLabel(level: UvLevel): String = stringResource(
         UvLevel.EXTREME -> R.string.uv_level_extreme
     }
 )
+
+@PreviewLightDark
+@Composable
+private fun MetricTilesPreview() {
+    PreviewSurface {
+        // Four tiles: one full row of three plus a part-filled second row.
+        MetricTiles(weather = PreviewData.weather, visibleMetrics = Metric.entries.toSet())
+    }
+}

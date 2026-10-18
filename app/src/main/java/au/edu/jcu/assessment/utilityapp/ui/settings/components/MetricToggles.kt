@@ -31,7 +31,7 @@ fun MetricToggles(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    // The whole row is the touch target, and screen readers announce it as one switch.
+                    // The whole row is the touch target, not just the small switch.
                     .toggleable(
                         value = checked,
                         role = Role.Switch,

@@ -12,9 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import au.edu.jcu.assessment.utilityapp.R
 import au.edu.jcu.assessment.utilityapp.domain.model.Weather
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewData
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewSurface
 import au.edu.jcu.assessment.utilityapp.ui.weather.formatTime
 
 /** Today's sunrise and sunset, in the city's local time. */
@@ -43,5 +46,13 @@ private fun SunTime(emoji: String, label: String, time: String) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(text = time, style = MaterialTheme.typography.titleMedium)
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun SunTimesCardPreview() {
+    PreviewSurface {
+        SunTimesCard(weather = PreviewData.weather)
     }
 }

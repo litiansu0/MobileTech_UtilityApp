@@ -12,11 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import au.edu.jcu.assessment.utilityapp.R
 import au.edu.jcu.assessment.utilityapp.domain.WeatherCondition
 import au.edu.jcu.assessment.utilityapp.domain.model.Weather
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewData
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewSurface
 import au.edu.jcu.assessment.utilityapp.ui.weather.formatTemperature
 
 /** Large "at a glance" card: condition icon, current temperature, feels-like and today's range. */
@@ -61,5 +64,22 @@ fun CurrentWeatherCard(weather: Weather, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun CurrentWeatherCardPreview() {
+    PreviewSurface {
+        CurrentWeatherCard(weather = PreviewData.weather)
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun CurrentWeatherCardNightPreview() {
+    PreviewSurface {
+        // Clear night: shows the night emoji (🌙) instead of the sun.
+        CurrentWeatherCard(weather = PreviewData.weather.copy(weatherCode = 0, isDay = false))
     }
 }

@@ -16,6 +16,10 @@ sealed interface WeatherUiState {
         val advice: OutfitAdvice,
         /** Detail tiles the user chose to show in Settings. */
         val visibleMetrics: Set<Metric>,
+        /** True while newer data is loading in the background (the old data stays on screen). */
+        val isRefreshing: Boolean = false,
+        /** Why the last refresh failed, if it did; [weather] is then the older data. */
+        val refreshError: ErrorReason? = null,
     ) : WeatherUiState
 
     data class Error(val reason: ErrorReason) : WeatherUiState

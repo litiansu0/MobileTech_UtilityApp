@@ -14,14 +14,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import au.edu.jcu.assessment.utilityapp.R
 import au.edu.jcu.assessment.utilityapp.domain.ClothingLevel
 import au.edu.jcu.assessment.utilityapp.domain.OutfitAdvice
+import au.edu.jcu.assessment.utilityapp.domain.OutfitAdvisor
 import au.edu.jcu.assessment.utilityapp.domain.UmbrellaAdvice
 import au.edu.jcu.assessment.utilityapp.domain.UmbrellaReason
 import au.edu.jcu.assessment.utilityapp.domain.UvLevel
+import au.edu.jcu.assessment.utilityapp.domain.model.UserSettings
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewData
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewSurface
 
 /** The core "at a glance" card: one short line each for umbrella, sun protection and clothing. */
 @Composable
@@ -111,3 +116,12 @@ private fun clothingText(level: ClothingLevel): String = stringResource(
         ClothingLevel.FREEZING -> R.string.advice_clothing_freezing
     }
 )
+
+@PreviewLightDark
+@Composable
+private fun AdviceCardPreview() {
+    PreviewSurface {
+        // Windy weather so the optional wind line is shown too.
+        AdviceCard(advice = OutfitAdvisor.advise(PreviewData.windyWeather, UserSettings()))
+    }
+}

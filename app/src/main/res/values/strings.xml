@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">MobileTech Utility App</string>
+    <string name="app_name">OOTD</string>
+
+    <!-- Bottom navigation -->
+    <string name="tab_today">Today</string>
+    <string name="tab_settings">Settings</string>
 
     <!-- Weather (main) screen -->
     <string name="weather_updated_at">Updated %1$s</string>
@@ -68,4 +72,6 @@
     <string name="error_network">No internet connection. Check your connection and try again.</string>
     <string name="error_server">Couldn\'t load the weather right now. Please try again.</string>
     <string name="action_retry">Retry</string>
+    <string name="refresh_failed_network">Couldn\'t refresh – no internet connection</string>
+    <string name="refresh_failed_server">Couldn\'t refresh – please try again later</string>
 </resources>

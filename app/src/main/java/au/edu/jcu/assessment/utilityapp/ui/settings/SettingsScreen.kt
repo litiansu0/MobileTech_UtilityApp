@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,13 +23,13 @@ import au.edu.jcu.assessment.utilityapp.domain.model.City
 import au.edu.jcu.assessment.utilityapp.domain.model.Metric
 import au.edu.jcu.assessment.utilityapp.domain.model.TemperatureUnit
 import au.edu.jcu.assessment.utilityapp.domain.model.UserSettings
+import au.edu.jcu.assessment.utilityapp.ui.preview.PreviewSurface
 import au.edu.jcu.assessment.utilityapp.ui.settings.components.CitySearch
 import au.edu.jcu.assessment.utilityapp.ui.settings.components.ColdOffsetSlider
 import au.edu.jcu.assessment.utilityapp.ui.settings.components.MetricToggles
 import au.edu.jcu.assessment.utilityapp.ui.settings.components.SettingsSection
 import au.edu.jcu.assessment.utilityapp.ui.settings.components.TemperatureUnitSelector
 import au.edu.jcu.assessment.utilityapp.ui.settings.components.UmbrellaThresholdSlider
-import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
 
 /** Settings tab. Connects the [SettingsViewModel] to the stateless [SettingsContent]. */
 @Composable
@@ -133,7 +134,7 @@ private fun SettingsPreview(
     query: String = "",
     searchState: CitySearchState = CitySearchState.Idle,
 ) {
-    MobileTech_UtilityAppTheme {
+    PreviewSurface {
         SettingsContent(
             settings = settings,
             query = query,
@@ -149,13 +150,20 @@ private fun SettingsPreview(
     }
 }
 
-@Preview(showBackground = true, name = "Default", heightDp = 1100)
+@PreviewLightDark
 @Composable
 private fun SettingsDefaultPreview() {
     SettingsPreview(settings = UserSettings())
 }
 
-@Preview(showBackground = true, name = "Search results")
+/** Taller canvas so the sliders and switches further down are visible too. */
+@Preview(name = "Full height", showBackground = true, heightDp = 1100)
+@Composable
+private fun SettingsFullHeightPreview() {
+    SettingsPreview(settings = UserSettings(coldOffset = -2))
+}
+
+@PreviewLightDark
 @Composable
 private fun SettingsSearchPreview() {
     SettingsPreview(
