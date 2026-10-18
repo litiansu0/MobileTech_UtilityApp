@@ -8,6 +8,15 @@ Built for **CP3406 Assessment 1: Utility App** (James Cook University), starting
 
 ---
 
+## Screenshots
+
+| | Today | Settings |
+|---|---|---|
+| **Light** | <img src="docs/screenshots/homepage.png" width="250" alt="Today screen, light theme"> | <img src="docs/screenshots/settingspage.png" width="250" alt="Settings screen, light theme"> |
+| **Dark** | <img src="docs/screenshots/homepage-dark.png" width="250" alt="Today screen, dark theme"> | <img src="docs/screenshots/settingspage-dark.png" width="250" alt="Settings screen, dark theme"> |
+
+---
+
 ## Features
 
 ### Today screen (main screen)
@@ -186,4 +195,3 @@ Command line (from the project root; on Windows use `gradlew.bat`):
 ## Credits
 
 - Weather and geocoding data: [Open-Meteo.com](https://open-meteo.com), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-- Starter template: CP3406 Mobile Technology, James Cook University.
