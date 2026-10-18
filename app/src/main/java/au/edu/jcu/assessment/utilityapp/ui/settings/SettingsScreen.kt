@@ -19,11 +19,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import au.edu.jcu.assessment.utilityapp.R
 import au.edu.jcu.assessment.utilityapp.domain.model.City
+import au.edu.jcu.assessment.utilityapp.domain.model.Metric
 import au.edu.jcu.assessment.utilityapp.domain.model.TemperatureUnit
 import au.edu.jcu.assessment.utilityapp.domain.model.UserSettings
 import au.edu.jcu.assessment.utilityapp.ui.settings.components.CitySearch
+import au.edu.jcu.assessment.utilityapp.ui.settings.components.ColdOffsetSlider
+import au.edu.jcu.assessment.utilityapp.ui.settings.components.MetricToggles
 import au.edu.jcu.assessment.utilityapp.ui.settings.components.SettingsSection
 import au.edu.jcu.assessment.utilityapp.ui.settings.components.TemperatureUnitSelector
+import au.edu.jcu.assessment.utilityapp.ui.settings.components.UmbrellaThresholdSlider
 import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
 
 /** Settings tab. Connects the [SettingsViewModel] to the stateless [SettingsContent]. */
@@ -43,6 +47,9 @@ fun SettingsScreen(
         onClearQuery = viewModel::clearSearch,
         onCitySelected = viewModel::onCitySelected,
         onTemperatureUnitSelected = viewModel::onTemperatureUnitSelected,
+        onUmbrellaThresholdChange = viewModel::onUmbrellaThresholdChange,
+        onColdOffsetChange = viewModel::onColdOffsetChange,
+        onMetricToggled = viewModel::onMetricToggled,
         modifier = modifier,
     )
 }
@@ -57,6 +64,9 @@ fun SettingsContent(
     onClearQuery: () -> Unit,
     onCitySelected: (City) -> Unit,
     onTemperatureUnitSelected: (TemperatureUnit) -> Unit,
+    onUmbrellaThresholdChange: (Int) -> Unit,
+    onColdOffsetChange: (Int) -> Unit,
+    onMetricToggled: (Metric, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -90,44 +100,72 @@ fun SettingsContent(
                 onSelected = onTemperatureUnitSelected,
             )
         }
+
+        HorizontalDivider()
+
+        SettingsSection(title = stringResource(R.string.settings_advice)) {
+            UmbrellaThresholdSlider(
+                percent = settings.umbrellaThreshold,
+                onPercentChange = onUmbrellaThresholdChange,
+            )
+            ColdOffsetSlider(
+                degrees = settings.coldOffset,
+                onDegreesChange = onColdOffsetChange,
+            )
+        }
+
+        HorizontalDivider()
+
+        SettingsSection(title = stringResource(R.string.settings_show_on_main)) {
+            MetricToggles(
+                visibleMetrics = settings.visibleMetrics,
+                onMetricToggled = onMetricToggled,
+            )
+        }
     }
 }
 
 // ---- Previews (sample data only, no network) ----
 
-@Preview(showBackground = true, name = "Default")
 @Composable
-private fun SettingsDefaultPreview() {
+private fun SettingsPreview(
+    settings: UserSettings,
+    query: String = "",
+    searchState: CitySearchState = CitySearchState.Idle,
+) {
     MobileTech_UtilityAppTheme {
         SettingsContent(
-            settings = UserSettings(),
-            query = "",
-            searchState = CitySearchState.Idle,
+            settings = settings,
+            query = query,
+            searchState = searchState,
             onQueryChange = {},
             onClearQuery = {},
             onCitySelected = {},
             onTemperatureUnitSelected = {},
+            onUmbrellaThresholdChange = {},
+            onColdOffsetChange = {},
+            onMetricToggled = { _, _ -> },
         )
     }
+}
+
+@Preview(showBackground = true, name = "Default", heightDp = 1100)
+@Composable
+private fun SettingsDefaultPreview() {
+    SettingsPreview(settings = UserSettings())
 }
 
 @Preview(showBackground = true, name = "Search results")
 @Composable
 private fun SettingsSearchPreview() {
-    MobileTech_UtilityAppTheme {
-        SettingsContent(
-            settings = UserSettings(temperatureUnit = TemperatureUnit.FAHRENHEIT),
-            query = "Bris",
-            searchState = CitySearchState.Results(
-                listOf(
-                    City.BRISBANE,
-                    City("Brisbane", "California", "United States", 37.68, -122.40),
-                )
-            ),
-            onQueryChange = {},
-            onClearQuery = {},
-            onCitySelected = {},
-            onTemperatureUnitSelected = {},
-        )
-    }
+    SettingsPreview(
+        settings = UserSettings(temperatureUnit = TemperatureUnit.FAHRENHEIT, coldOffset = 3),
+        query = "Bris",
+        searchState = CitySearchState.Results(
+            listOf(
+                City.BRISBANE,
+                City("Brisbane", "California", "United States", 37.68, -122.40),
+            )
+        ),
+    )
 }

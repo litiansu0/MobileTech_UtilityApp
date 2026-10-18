@@ -18,7 +18,15 @@ data class UserSettings(
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
     /** Suggest an umbrella when the chance of rain is at least this many percent. */
     val umbrellaThreshold: Int = 40,
-    /** Degrees (°C) added to how cold it feels, for people who feel the cold more. */
+    /**
+     * Personal adjustment in °C for clothing advice. Positive = "I feel the cold" (advice
+     * treats the day as colder), negative = "I feel the heat".
+     */
     val coldOffset: Int = 0,
     val visibleMetrics: Set<Metric> = setOf(Metric.RAIN, Metric.UV, Metric.WIND),
-)
+) {
+    companion object {
+        val UMBRELLA_THRESHOLD_RANGE = 0..100
+        val COLD_OFFSET_RANGE = -5..5
+    }
+}

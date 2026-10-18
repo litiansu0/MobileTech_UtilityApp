@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import au.edu.jcu.assessment.utilityapp.R
 import au.edu.jcu.assessment.utilityapp.domain.OutfitAdvisor
 import au.edu.jcu.assessment.utilityapp.domain.model.City
+import au.edu.jcu.assessment.utilityapp.domain.model.Metric
 import au.edu.jcu.assessment.utilityapp.domain.model.TemperatureUnit
 import au.edu.jcu.assessment.utilityapp.domain.model.UserSettings
 import au.edu.jcu.assessment.utilityapp.domain.model.Weather
@@ -31,6 +32,8 @@ import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.AdviceCard
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.CurrentWeatherCard
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.LocationHeader
+import au.edu.jcu.assessment.utilityapp.ui.weather.components.MetricTiles
+import au.edu.jcu.assessment.utilityapp.ui.weather.components.SunTimesCard
 import java.time.LocalDateTime
 
 /** Main (Utility) tab. Connects the [WeatherViewModel] to the stateless [WeatherContent]. */
@@ -77,6 +80,10 @@ private fun WeatherDetails(
         )
         CurrentWeatherCard(weather = state.weather)
         AdviceCard(advice = state.advice)
+        MetricTiles(weather = state.weather, visibleMetrics = state.visibleMetrics)
+        if (Metric.SUN_TIMES in state.visibleMetrics) {
+            SunTimesCard(weather = state.weather)
+        }
     }
 }
 
@@ -144,6 +151,7 @@ private fun WeatherSuccessPreview() {
                 city = City.BRISBANE,
                 weather = previewWeather,
                 advice = OutfitAdvisor.advise(previewWeather, UserSettings()),
+                visibleMetrics = Metric.entries.toSet(),
             ),
             onRefresh = {},
         )

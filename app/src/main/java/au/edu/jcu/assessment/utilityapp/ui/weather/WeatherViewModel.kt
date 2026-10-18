@@ -30,7 +30,8 @@ import kotlinx.coroutines.launch
  * as [uiState].
  *
  * - City or temperature unit changes → download the weather again.
- * - Any other setting change (umbrella threshold, cold offset) → only recalculate the advice.
+ * - Any other setting change (umbrella threshold, cold offset, visible tiles) → only rebuild
+ *   the UI state from the weather already downloaded.
  */
 class WeatherViewModel(
     private val weatherRepository: WeatherRepository,
@@ -58,6 +59,7 @@ class WeatherViewModel(
                     city = load.city,
                     weather = load.weather,
                     advice = OutfitAdvisor.advise(load.weather, settings),
+                    visibleMetrics = settings.visibleMetrics,
                 )
             }
         }.stateIn(

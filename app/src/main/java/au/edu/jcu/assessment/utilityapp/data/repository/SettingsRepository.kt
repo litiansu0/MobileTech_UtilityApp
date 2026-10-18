@@ -24,10 +24,13 @@ class SettingsRepository {
     fun setTemperatureUnit(unit: TemperatureUnit) =
         _settings.update { it.copy(temperatureUnit = unit) }
 
-    fun setUmbrellaThreshold(percent: Int) =
-        _settings.update { it.copy(umbrellaThreshold = percent.coerceIn(0, 100)) }
+    fun setUmbrellaThreshold(percent: Int) = _settings.update {
+        it.copy(umbrellaThreshold = percent.coerceIn(UserSettings.UMBRELLA_THRESHOLD_RANGE))
+    }
 
-    fun setColdOffset(degrees: Int) = _settings.update { it.copy(coldOffset = degrees) }
+    fun setColdOffset(degrees: Int) = _settings.update {
+        it.copy(coldOffset = degrees.coerceIn(UserSettings.COLD_OFFSET_RANGE))
+    }
 
     fun setMetricVisible(metric: Metric, visible: Boolean) = _settings.update {
         val metrics = if (visible) it.visibleMetrics + metric else it.visibleMetrics - metric

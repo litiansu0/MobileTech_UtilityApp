@@ -14,6 +14,7 @@ import au.edu.jcu.assessment.utilityapp.WeatherApplication
 import au.edu.jcu.assessment.utilityapp.data.repository.SettingsRepository
 import au.edu.jcu.assessment.utilityapp.data.repository.WeatherRepository
 import au.edu.jcu.assessment.utilityapp.domain.model.City
+import au.edu.jcu.assessment.utilityapp.domain.model.Metric
 import au.edu.jcu.assessment.utilityapp.domain.model.TemperatureUnit
 import au.edu.jcu.assessment.utilityapp.domain.model.UserSettings
 import kotlinx.coroutines.CancellationException
@@ -68,6 +69,18 @@ class SettingsViewModel(
 
     fun onTemperatureUnitSelected(unit: TemperatureUnit) {
         settingsRepository.setTemperatureUnit(unit)
+    }
+
+    fun onUmbrellaThresholdChange(percent: Int) {
+        settingsRepository.setUmbrellaThreshold(percent)
+    }
+
+    fun onColdOffsetChange(degrees: Int) {
+        settingsRepository.setColdOffset(degrees)
+    }
+
+    fun onMetricToggled(metric: Metric, visible: Boolean) {
+        settingsRepository.setMetricVisible(metric, visible)
     }
 
     /**

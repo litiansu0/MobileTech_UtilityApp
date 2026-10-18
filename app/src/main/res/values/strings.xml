@@ -8,6 +8,22 @@
     <string name="weather_feels_like">Feels like %1$s</string>
     <string name="weather_high_low">High %1$s · Low %2$s</string>
 
+    <!-- Detail tiles and sunrise/sunset card -->
+    <string name="tile_rain">Rain today</string>
+    <string name="tile_uv">UV now</string>
+    <string name="tile_wind">Wind</string>
+    <string name="tile_humidity">Humidity</string>
+    <string name="value_percent">%1$d%%</string>
+    <string name="value_wind_kmh">%1$d km/h</string>
+    <string name="value_uv">%1$d · %2$s</string>
+    <string name="uv_level_low">Low</string>
+    <string name="uv_level_moderate">Moderate</string>
+    <string name="uv_level_high">High</string>
+    <string name="uv_level_very_high">Very high</string>
+    <string name="uv_level_extreme">Extreme</string>
+    <string name="sun_sunrise">Sunrise</string>
+    <string name="sun_sunset">Sunset</string>
+
     <!-- Today's advice card -->
     <string name="advice_title">Today\'s advice</string>
     <string name="advice_umbrella_raining_now">Take an umbrella – it\'s raining now</string>
@@ -36,6 +52,17 @@
     <string name="settings_search_error">Couldn\'t search right now. Check your connection and try again.</string>
     <string name="settings_city_selected">Current city</string>
     <string name="settings_temperature_unit">Temperature unit</string>
+    <string name="settings_advice">Advice</string>
+    <string name="settings_umbrella_threshold">Suggest an umbrella when the chance of rain is at least %1$d%%</string>
+    <string name="settings_cold_offset_normal">Clothing: no adjustment</string>
+    <string name="settings_cold_offset_cold">Clothing: I feel the cold – dress as if %1$d°C colder</string>
+    <string name="settings_cold_offset_heat">Clothing: I feel the heat – dress as if %1$d°C warmer</string>
+    <string name="settings_show_on_main">Show on main screen</string>
+    <string name="metric_rain">Chance of rain</string>
+    <string name="metric_uv">UV index now</string>
+    <string name="metric_wind">Wind speed</string>
+    <string name="metric_humidity">Humidity</string>
+    <string name="metric_sun_times">Sunrise and sunset</string>
 
     <!-- Errors -->
     <string name="error_network">No internet connection. Check your connection and try again.</string>
