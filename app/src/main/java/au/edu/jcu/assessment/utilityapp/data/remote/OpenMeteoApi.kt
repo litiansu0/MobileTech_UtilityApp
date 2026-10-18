@@ -32,6 +32,6 @@ interface OpenMeteoApi {
             "weather_code,wind_speed_10m,uv_index,is_day"
 
         const val DAILY_FIELDS = "temperature_2m_max,temperature_2m_min," +
-            "precipitation_probability_max,sunrise,sunset"
+            "precipitation_probability_max,uv_index_max,sunrise,sunset"
     }
 }

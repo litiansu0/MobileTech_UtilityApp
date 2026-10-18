@@ -22,10 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import au.edu.jcu.assessment.utilityapp.R
+import au.edu.jcu.assessment.utilityapp.domain.OutfitAdvisor
 import au.edu.jcu.assessment.utilityapp.domain.model.City
 import au.edu.jcu.assessment.utilityapp.domain.model.TemperatureUnit
+import au.edu.jcu.assessment.utilityapp.domain.model.UserSettings
 import au.edu.jcu.assessment.utilityapp.domain.model.Weather
 import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
+import au.edu.jcu.assessment.utilityapp.ui.weather.components.AdviceCard
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.CurrentWeatherCard
 import au.edu.jcu.assessment.utilityapp.ui.weather.components.LocationHeader
 import java.time.LocalDateTime
@@ -50,14 +53,13 @@ fun WeatherContent(
     when (uiState) {
         WeatherUiState.Loading -> LoadingState(modifier)
         is WeatherUiState.Error -> ErrorState(uiState.reason, onRetry = onRefresh, modifier)
-        is WeatherUiState.Success -> WeatherDetails(uiState.city, uiState.weather, onRefresh, modifier)
+        is WeatherUiState.Success -> WeatherDetails(uiState, onRefresh, modifier)
     }
 }
 
 @Composable
 private fun WeatherDetails(
-    city: City,
-    weather: Weather,
+    state: WeatherUiState.Success,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -69,11 +71,12 @@ private fun WeatherDetails(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         LocationHeader(
-            cityName = city.name,
-            updatedAt = weather.updatedAt.formatTime(),
+            cityName = state.city.name,
+            updatedAt = state.weather.updatedAt.formatTime(),
             onRefresh = onRefresh,
         )
-        CurrentWeatherCard(weather = weather)
+        CurrentWeatherCard(weather = state.weather)
+        AdviceCard(advice = state.advice)
     }
 }
 
@@ -124,6 +127,7 @@ private val previewWeather = Weather(
     isDay = true,
     precipitationProbability = 73,
     uvIndex = 7.95,
+    uvIndexMax = 8.05,
     windSpeedKmh = 13.9,
     humidity = 56,
     sunrise = LocalDateTime.of(2026, 10, 18, 5, 9),
@@ -135,7 +139,14 @@ private val previewWeather = Weather(
 @Composable
 private fun WeatherSuccessPreview() {
     MobileTech_UtilityAppTheme {
-        WeatherContent(WeatherUiState.Success(City.BRISBANE, previewWeather), onRefresh = {})
+        WeatherContent(
+            uiState = WeatherUiState.Success(
+                city = City.BRISBANE,
+                weather = previewWeather,
+                advice = OutfitAdvisor.advise(previewWeather, UserSettings()),
+            ),
+            onRefresh = {},
+        )
     }
 }
 

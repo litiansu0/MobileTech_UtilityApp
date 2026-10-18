@@ -1,5 +1,6 @@
 package au.edu.jcu.assessment.utilityapp.ui.weather
 
+import au.edu.jcu.assessment.utilityapp.domain.OutfitAdvice
 import au.edu.jcu.assessment.utilityapp.domain.model.City
 import au.edu.jcu.assessment.utilityapp.domain.model.Weather
 
@@ -8,7 +9,11 @@ sealed interface WeatherUiState {
 
     data object Loading : WeatherUiState
 
-    data class Success(val city: City, val weather: Weather) : WeatherUiState
+    data class Success(
+        val city: City,
+        val weather: Weather,
+        val advice: OutfitAdvice,
+    ) : WeatherUiState
 
     data class Error(val reason: ErrorReason) : WeatherUiState
 }

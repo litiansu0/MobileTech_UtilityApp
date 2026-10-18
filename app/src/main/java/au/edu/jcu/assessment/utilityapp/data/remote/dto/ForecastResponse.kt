@@ -27,6 +27,7 @@ data class DailyDto(
     @SerializedName("temperature_2m_min") val minTemperature: List<Double>,
     // Can be null for some locations, so the element type is nullable.
     @SerializedName("precipitation_probability_max") val precipitationProbabilityMax: List<Int?>,
+    @SerializedName("uv_index_max") val uvIndexMax: List<Double?>,
     val sunrise: List<String>,
     val sunset: List<String>,
 )

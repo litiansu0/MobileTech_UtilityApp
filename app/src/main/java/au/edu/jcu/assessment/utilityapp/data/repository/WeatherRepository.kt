@@ -52,6 +52,8 @@ private fun ForecastResponse.toWeather(unit: TemperatureUnit): Weather = Weather
     isDay = current.isDay == 1,
     precipitationProbability = daily.precipitationProbabilityMax.firstOrNull() ?: 0,
     uvIndex = current.uvIndex,
+    // Fall back to the current reading if the daily maximum is missing.
+    uvIndexMax = daily.uvIndexMax.firstOrNull() ?: current.uvIndex,
     windSpeedKmh = current.windSpeed,
     humidity = current.humidity,
     // Open-Meteo returns local ISO times without an offset, e.g. "2026-10-18T05:09".

@@ -17,7 +17,10 @@ data class Weather(
     val isDay: Boolean,
     /** Highest chance of rain today, 0–100 %. */
     val precipitationProbability: Int,
+    /** UV index right now. */
     val uvIndex: Double,
+    /** Highest UV index expected today; used for sun-protection advice. */
+    val uvIndexMax: Double,
     val windSpeedKmh: Double,
     val humidity: Int,
     val sunrise: LocalDateTime,

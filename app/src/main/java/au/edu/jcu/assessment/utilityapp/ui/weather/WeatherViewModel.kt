@@ -9,38 +9,67 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import au.edu.jcu.assessment.utilityapp.WeatherApplication
 import au.edu.jcu.assessment.utilityapp.data.repository.SettingsRepository
 import au.edu.jcu.assessment.utilityapp.data.repository.WeatherRepository
+import au.edu.jcu.assessment.utilityapp.domain.OutfitAdvisor
 import au.edu.jcu.assessment.utilityapp.domain.model.City
 import au.edu.jcu.assessment.utilityapp.domain.model.TemperatureUnit
+import au.edu.jcu.assessment.utilityapp.domain.model.Weather
 import java.io.IOException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
- * Loads the weather for the city chosen in Settings and exposes it as [uiState].
- * Reloads automatically whenever the city or temperature unit changes.
+ * Loads the weather for the city chosen in Settings and exposes it, with today's advice,
+ * as [uiState].
+ *
+ * - City or temperature unit changes → download the weather again.
+ * - Any other setting change (umbrella threshold, cold offset) → only recalculate the advice.
  */
 class WeatherViewModel(
     private val weatherRepository: WeatherRepository,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<WeatherUiState>(WeatherUiState.Loading)
-    val uiState: StateFlow<WeatherUiState> = _uiState.asStateFlow()
+    /** Result of the latest download, before advice is added. */
+    private sealed interface LoadState {
+        data object Loading : LoadState
+        data class Loaded(val city: City, val weather: Weather) : LoadState
+        data class Failed(val reason: ErrorReason) : LoadState
+    }
+
+    private val loadState = MutableStateFlow<LoadState>(LoadState.Loading)
 
     // The request in progress, so a newer request can cancel an older one.
     private var loadJob: Job? = null
 
+    val uiState: StateFlow<WeatherUiState> =
+        combine(loadState, settingsRepository.settings) { load, settings ->
+            when (load) {
+                LoadState.Loading -> WeatherUiState.Loading
+                is LoadState.Failed -> WeatherUiState.Error(load.reason)
+                is LoadState.Loaded -> WeatherUiState.Success(
+                    city = load.city,
+                    weather = load.weather,
+                    advice = OutfitAdvisor.advise(load.weather, settings),
+                )
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            // Keep running for 5 s after the screen goes away, e.g. during rotation.
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = WeatherUiState.Loading,
+        )
+
     init {
         viewModelScope.launch {
             settingsRepository.settings
-                // Only these two settings change what the API returns; other settings
-                // (thresholds, visible tiles) must not trigger a network call.
                 .map { it.city to it.temperatureUnit }
                 .distinctUntilChanged()
                 .collect { (city, unit) -> loadWeather(city, unit) }
@@ -56,16 +85,16 @@ class WeatherViewModel(
     private fun loadWeather(city: City, unit: TemperatureUnit) {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            _uiState.value = WeatherUiState.Loading
-            _uiState.value = try {
-                WeatherUiState.Success(city, weatherRepository.getWeather(city, unit))
+            loadState.value = LoadState.Loading
+            loadState.value = try {
+                LoadState.Loaded(city, weatherRepository.getWeather(city, unit))
             } catch (e: CancellationException) {
                 throw e // A newer request replaced this one; let the coroutine stop normally.
             } catch (e: IOException) {
-                WeatherUiState.Error(ErrorReason.NETWORK)
+                LoadState.Failed(ErrorReason.NETWORK)
             } catch (e: Exception) {
                 // HTTP errors (HttpException) or unexpected JSON.
-                WeatherUiState.Error(ErrorReason.SERVER)
+                LoadState.Failed(ErrorReason.SERVER)
             }
         }
     }

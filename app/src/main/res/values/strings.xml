@@ -8,6 +8,24 @@
     <string name="weather_feels_like">Feels like %1$s</string>
     <string name="weather_high_low">High %1$s · Low %2$s</string>
 
+    <!-- Today's advice card -->
+    <string name="advice_title">Today\'s advice</string>
+    <string name="advice_umbrella_raining_now">Take an umbrella – it\'s raining now</string>
+    <string name="advice_umbrella_likely">Take an umbrella – %1$d%% chance of rain</string>
+    <string name="advice_umbrella_not_needed">No umbrella needed – %1$d%% chance of rain</string>
+    <string name="advice_uv_low">UV low today (max %1$d) – no sun protection needed</string>
+    <string name="advice_uv_moderate">UV moderate (max %1$d) – sunscreen recommended</string>
+    <string name="advice_uv_high">UV high (max %1$d) – sunscreen, hat and sunglasses</string>
+    <string name="advice_uv_very_high">UV very high (max %1$d) – sunscreen, hat and shade at midday</string>
+    <string name="advice_uv_extreme">UV extreme (max %1$d) – avoid the midday sun</string>
+    <string name="advice_clothing_hot">Hot – light, breathable clothes</string>
+    <string name="advice_clothing_warm">Warm – T-shirt and shorts</string>
+    <string name="advice_clothing_mild">Mild – long sleeves or a light layer</string>
+    <string name="advice_clothing_cool">Cool – jumper or light jacket</string>
+    <string name="advice_clothing_cold">Cold – warm coat</string>
+    <string name="advice_clothing_freezing">Freezing – heavy coat, hat and gloves</string>
+    <string name="advice_wind">Windy (%1$d km/h) – umbrellas may struggle</string>
+
     <!-- Errors -->
     <string name="error_network">No internet connection. Check your connection and try again.</string>
     <string name="error_server">Couldn\'t load the weather right now. Please try again.</string>

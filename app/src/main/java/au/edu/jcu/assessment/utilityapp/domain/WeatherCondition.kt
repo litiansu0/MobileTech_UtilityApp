@@ -24,10 +24,18 @@ enum class WeatherCondition(
     THUNDERSTORM("Thunderstorm", "⛈️"),
     UNKNOWN("Unknown", "🌡️");
 
+    /** True when rain is falling now (drizzle, rain, showers or a storm). */
+    val isRainy: Boolean
+        get() = this in RAINY_CONDITIONS
+
     /** Emoji icon for the condition; some conditions use a different icon at night. */
     fun emoji(isDay: Boolean): String = if (isDay) dayEmoji else nightEmoji
 
     companion object {
+        private val RAINY_CONDITIONS = setOf(
+            DRIZZLE, FREEZING_DRIZZLE, RAIN, FREEZING_RAIN, RAIN_SHOWERS, THUNDERSTORM,
+        )
+
         fun fromCode(code: Int): WeatherCondition = when (code) {
             0 -> CLEAR
             1 -> MAINLY_CLEAR
