@@ -20,7 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import au.edu.jcu.assessment.utilityapp.screen.SettingsScreen
+import au.edu.jcu.assessment.utilityapp.ui.settings.SettingsScreen
 import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
 import au.edu.jcu.assessment.utilityapp.ui.weather.WeatherScreen
 

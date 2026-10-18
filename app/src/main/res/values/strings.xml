@@ -26,6 +26,17 @@
     <string name="advice_clothing_freezing">Freezing – heavy coat, hat and gloves</string>
     <string name="advice_wind">Windy (%1$d km/h) – umbrellas may struggle</string>
 
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_location">Location</string>
+    <string name="settings_current_city">Showing weather for %1$s</string>
+    <string name="settings_search_hint">Search for a city</string>
+    <string name="settings_search_clear">Clear search</string>
+    <string name="settings_search_no_results">No cities found for “%1$s”</string>
+    <string name="settings_search_error">Couldn\'t search right now. Check your connection and try again.</string>
+    <string name="settings_city_selected">Current city</string>
+    <string name="settings_temperature_unit">Temperature unit</string>
+
     <!-- Errors -->
     <string name="error_network">No internet connection. Check your connection and try again.</string>
     <string name="error_server">Couldn\'t load the weather right now. Please try again.</string>
